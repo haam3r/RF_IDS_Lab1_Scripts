@@ -2,7 +2,7 @@
 
 export LC_ALL=C
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-python $DIR/gen_ips.py
+\python3 $DIR/gen_ips.py
 int=1
 
 while read ip; do
