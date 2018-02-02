@@ -1,0 +1,9 @@
+[Unit]
+After=network.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=/bin/bash /root/labs/RF_IDS_Lab1_Scripts/scripts/assign_ips.sh
+Restart=on-failure
