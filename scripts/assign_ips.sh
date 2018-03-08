@@ -11,7 +11,7 @@ while read ip; do
 	ip addr add "$ip" dev "enp0s3:$int"
 	int=$((int+1))
 
-done <$DIR/red_ips.txt
+done < /root/running/red_ips.txt
 
 ip link set dev enp0s3 up
 

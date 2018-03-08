@@ -11,7 +11,7 @@ for i in range(0, 10):
     except Exception:
         continue
 
-with open('red_ips.txt', 'w+') as file:
+with open('/root/running/red_ips.txt', 'w+') as file:
     for ip in red_addr:
         file.write('{0}\n'.format(ip))   
 
