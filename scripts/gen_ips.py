@@ -4,14 +4,20 @@ from faker import Faker
 
 faker = Faker()
 
-red_addr = set()
-for i in range(0, 10):
+ips = set()
+for i in range(0, 20):
     try:
-        red_addr.add(faker.ipv4())
+        ips.add(faker.ipv4())
     except Exception:
         continue
+
+red_addr = list(ips)[:10]
+white_addr = list(ips)[11:]
 
 with open('/root/running/red_ips.txt', 'w+') as file:
     for ip in red_addr:
         file.write('{0}\n'.format(ip))   
 
+with open('/root/running/white_ips.txt', 'w+') as file:
+    for ip in white_addr:
+        file.write('{0}\n'.format(ip))   
