@@ -42,7 +42,7 @@ sed -i "s|http://tiia.rangeforce.com:8888/cyberUK/portal/|http://${host}|g" /roo
 sed -i "s|'index.php'|''|g" /root/labs/ci-modular-target/application/config/config.php
 
 # Setup MySQL database
-ssh root@${hostip} apt-get update && apt-get install -y nginx debconf-utils 
+ssh root@${hostip} apt-get update && ssh root@${hostip} apt-get install -y nginx debconf-utils 
 PASS=$(jq '.DBpass' /root/labs/RF_IDS_Lab1_Scripts/scripts/web.json | cut -d '"' -f 2)
 
 ssh root@${hostip} debconf-set-selections <<< "mysql-server mysql-server/root_password password $PASS"
