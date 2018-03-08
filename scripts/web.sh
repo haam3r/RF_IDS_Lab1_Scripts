@@ -107,20 +107,21 @@ echo "Lab personalize setup has finished";
 
 pwdsink () {
 # Set Up Password Sink
-while :
-do
-	ssh -o StrictHostKeyChecking=no root@${attackerip} uname && break
-	sleep 1
-done
-
+#while :
+#do
+#	echo "ssh -o StrictHostKeyChecking=no root@${attackerip} hostname && break" >> /root/running/setup.log
+#        ssh root@${attackerip} hostname && break
+#	sleep 2
+#done
+apt-get install -y nginx
 # Remove old instances
-ssh root@${attackerip} rm -r /var/www/${attacker}/*
-ssh root@${attackerip} mkdir -p /var/www/${attacker}
+rm -r /var/www/${attacker}/*
+mkdir -p /var/www/${attacker}
 
 # Copy new instance
 
-scp -rq /root/labs/pwdsink/* root@${attackerip}:/var/www/${attacker}/
-ssh root@${attackerip} chown www-data:www-data /var/www/ -R
+cp -R /root/labs/pwdsink/* /var/www/${attacker}/
+chown www-data:www-data /var/www/ -R
 
 # TODO cleanup if no certs required
 # Copy certificate and key
@@ -129,13 +130,13 @@ ssh root@${attackerip} chown www-data:www-data /var/www/ -R
 
 # Remove default
 
-ssh root@${attackerip} rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-enabled/default
 
 # Add configuration to the host
-ssh root@${attackerip} "cat > /etc/nginx/sites-available/${attacker}" << EOF
+cat > /etc/nginx/sites-available/${attacker} << EOF
 
 server {
-        listen 80;
+        listen ${attackerip}:80;
 
         root   /var/www/${attacker};
 
@@ -181,23 +182,23 @@ server {
 EOF
 
 # Enable site
-ssh root@${attackerip} ln -s /etc/nginx/sites-available/${attacker} /etc/nginx/sites-enabled/
+ln -s /etc/nginx/sites-available/${attacker} /etc/nginx/sites-enabled/
 
 # Restart nginx
-ssh root@${attackerip} systemctl restart nginx.service
+systemctl restart nginx.service
 
 # Remove git folder
-ssh root@${attackerip} rm -r /var/www/${attacker}/.git
+rm -r /var/www/${attacker}/.git
 
 # Now shuffle our tracks in the history file
 
-ssh root@${attackerip} 'cat /dev/null > ~/.bash_history && history -c && exit'
-ssh root@${attackerip} 'cat /dev/null > ~student/.bash_history && history -c && exit'
-ssh root@${attackerip} "usermod -L student"
+#cat /dev/null > ~/.bash_history && history -c
+#cat /dev/null > ~student/.bash_history && history -c
+usermod -L student
 
 # Move JS deface in place
-scp /root/labs/ci-modular-target-checks/attacks/deface.js root@${attackerip}:/var/www/${attacker}/ #
-ssh root@${attackerip} chown www-data.www-data /var/www/
+cp /root/labs/ci-modular-target-checks/attacks/deface.js /var/www/${attacker}/
+chown www-data.www-data /var/www/
 
 echo "Password sink is set up";
 }
