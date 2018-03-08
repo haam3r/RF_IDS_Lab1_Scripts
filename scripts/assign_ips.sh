@@ -22,5 +22,3 @@ while read ip; do
 done < /root/running/white_ips.txt
 
 ip link set dev enp0s3 up
-
-sleep infinity
