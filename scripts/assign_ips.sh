@@ -13,6 +13,12 @@ while read ip; do
 
 done < /root/running/red_ips.txt
 
-ip link set dev enp0s3 up
+while read ip; do
 
-sleep infinity
+	echo "Adding $ip"
+	ip addr add "$ip" dev "enp0s3:$int"
+	int=$((int+1))
+
+done < /root/running/white_ips.txt
+
+ip link set dev enp0s3 up
