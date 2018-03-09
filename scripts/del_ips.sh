@@ -1,18 +1,19 @@
 #!/bin/bash
 
 export LC_ALL=C
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-#\python3 $DIR/gen_ips.py
-int=1
 
+# Delete red ips
 while read ip; do
 
-	echo "Adding $ip"
+	echo "Delete red $ip"
 	ip addr del "$ip" dev "enp0s3:$int"
-	int=$((int+1))
 
-done <$DIR/red_ips.txt
+done </root/running/red_ips.txt
 
-#ip link set dev enp0s3 up
+# Delete white ips
+while read ip; do
 
-#sleep infinity
+	echo "Delete white $ip"
+	ip addr del "$ip" dev "enp0s3:$int"
+
+done </root/running/white_ips.txt
