@@ -42,12 +42,11 @@ def main():
         p.communicate()
 
         if p.returncode != 0:
-            print('ALL HELL IS LOOSE!!!')
-            print(p.stderr)
+            logging.error('Setting objective step-rx10 completed has failed')
         else:
-            print('Successful: {}'.format(p.returncode))
+            logging.info('Successfully set step-rx10 as completed: {}'.format(p.returncode))
     else:
-        logging.info('Check failed')
+        logging.info('Check failed for unknown reasons')
 
 
 if __name__ == '__main__':
