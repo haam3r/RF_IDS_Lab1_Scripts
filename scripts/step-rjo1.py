@@ -22,8 +22,9 @@ def main():
         'iptables -L FORWARD | grep -q "NFQUEUE num 0"; echo $?',
         'suricata -c /etc/suricata/suricata.yaml -T | grep -q "Configuration provided was successfully loaded. Exiting"; echo $?',
         'suricata --dump-config | grep -qP "^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]"; echo $?',
-        'suricata --dump-config | grep -qP "af-packet.0.interface = enp0s3"; echo $?',
-        'grep -iq "engine started" /var/log/suricata/suricata.log && grep -qi "AFP capture threads are running" /var/log/suricata/suricata.log; echo $?'
+        'systemctl is-active --quiet suricata; echo $?',
+        'ps auxf | grep -qP "/usr/bin/[s]uricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid -q 0 -D -vvv"; echo $?',
+        'tail -n 20 /var/log/suricata/suricata.log | grep -iq -e "NFQ running in standard ACCEPT/DROP mode" -e "engine started"; echo $?'
     ]
     success = 0 
 

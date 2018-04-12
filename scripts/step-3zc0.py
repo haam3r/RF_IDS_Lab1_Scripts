@@ -18,20 +18,30 @@ def main():
     logging.debug('Starting check for step-3zc0')
     vta_step = 'step-3zc0'
     host = 'ids'
-    cmd = 'grep -iq "alert" /etc/suricata/rules/custom.rules && grep -oqP "sid\:1\d{6}" /etc/suricata/rules/custom.rules && grep -qP "msg\:.+" /etc/suricata/rules/custom.rules; echo $?'
-    ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
+    cmds = [
+        'grep -iPq "[alert|drop]" /etc/suricata/rules/custom.rules; echo $?',
+        'grep -oqP "sid\:1\d{6}" /etc/suricata/rules/custom.rules; echo $?',
+        'grep -qP "msg\:.+" /etc/suricata/rules/custom.rules; echo $?'
+    ]
+    success = 0
+
+    for cmd in cmds:
+        ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
                            shell=False,
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
-    try:
-        result = ssh.stdout.readlines()[0].split(" ")
-    except IndexError:
-        logging.warning('Not okay'.format(host=host))
-        sys.exit(1)
+        try:
+            result = ssh.stdout.readlines()[0].split(" ")
+            logging.debug('Command {cmd} got result {result}'.format(cmd=cmd, result=result))
+            if result[0].rstrip() == '0':
+                success += 1
+        except IndexError:
+            logging.warning('Not okay'.format(host=host))
+            sys.exit(1)
 
     logging.debug('Exit code was {}'.format(result[0]))
 
-    if result[0].rstrip() == '0':
+    if success == len(cmds): 
         logging.info('Correct rule in correct file')
         command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
                   .format(step=vta_step)
