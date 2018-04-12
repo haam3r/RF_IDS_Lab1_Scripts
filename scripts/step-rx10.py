@@ -43,10 +43,12 @@ def main():
 
         if p.returncode != 0:
             logging.error('Setting objective step-rx10 completed has failed')
+            sys.exit(1)
         else:
             logging.info('Successfully set step-rx10 as completed: {}'.format(p.returncode))
     else:
         logging.info('Check failed for unknown reasons')
+        sys.exit(1)
 
 
 if __name__ == '__main__':

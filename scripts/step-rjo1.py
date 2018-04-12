@@ -26,7 +26,7 @@ def main():
         'grep -iq "engine started" /var/log/suricata/suricata.log && grep -qi "AFP capture threads are running" /var/log/suricata/suricata.log; echo $?'
     ]
     success = 0 
-    
+
     for cmd in cmds:
         ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
                            shell=False,
@@ -41,8 +41,8 @@ def main():
             logging.warning('Suricata conf check failed with {result} for cmd {cmd}'.format(result=result, cmd=cmd))
             sys.exit(1)
 
-    if success == 5:
-        logging.info('All configuration checks passed')
+    if success == len(cmds):
+        logging.info('All {nr} configuration checks passed for {step}'.format(nr=len(cmds), step=vta_step))
         command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
                   .format(step=vta_step)
         p = subprocess.Popen(shlex.split(command),
@@ -53,10 +53,12 @@ def main():
     
         if p.returncode != 0:
             logging.error('Setting objective {step} completed has failed'.format(step=vta_step))
+            sys.exit(1)
         else:
             logging.info('Successfully set {step} as completed: {ret}'.format(step=vta_step, ret=p.returncode))
     else:
-        print('Exit code nonzero, objective not completed')
+        logging.error('1 or more checks failed for {step}'.format(step=vta_step))
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

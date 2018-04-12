@@ -15,10 +15,10 @@ def main():
     Check if new rule is in custom.rules 
     '''
 
-    logging.debug('Starting check step-3zc0')
+    logging.debug('Starting check for step-3zc0')
     vta_step = 'step-3zc0'
     host = 'ids'
-    cmd = 'grep -i "alert" /etc/suricata/rules/custom.rules >> /dev/null && grep -oP "sid\:1\d{6}" /etc/suricata/rules/custom.rules >> /dev/null && grep -P "msg\:.+" /etc/suricata/rules/custom.rules >> /dev/null; echo $?'
+    cmd = 'grep -iq "alert" /etc/suricata/rules/custom.rules && grep -oqP "sid\:1\d{6}" /etc/suricata/rules/custom.rules && grep -qP "msg\:.+" /etc/suricata/rules/custom.rules; echo $?'
     ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
                            shell=False,
                            stdout=subprocess.PIPE,
@@ -32,7 +32,7 @@ def main():
     logging.debug('Exit code was {}'.format(result[0]))
 
     if result[0].rstrip() == '0':
-        logging.info('Correct rule in correct file'.format(host=host))
+        logging.info('Correct rule in correct file')
         command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
                   .format(step=vta_step)
         p = subprocess.Popen(shlex.split(command),
@@ -43,10 +43,12 @@ def main():
     
         if p.returncode != 0:
             logging.error('Setting objective {step} completed has failed'.format(step=vta_step))
+            sys.exit(1)
         else:
             logging.info('Successfully set {step} as completed: {ret}'.format(step=vta_step, ret=p.returncode))
     else:
-        print('Exit code nonzero, objective not completed')
+        logging.error('Exit code nonzero, objective not completed')
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
