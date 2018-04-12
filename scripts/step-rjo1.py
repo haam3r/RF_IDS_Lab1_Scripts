@@ -18,21 +18,31 @@ def main():
     logging.debug('Starting check step-rjo1')
     vta_step = 'step-rjo1'
     host = 'ids'
-    cmd = 'grep -i "engine started" /var/log/suricata/suricata.log >> /dev/null && grep -i "AFP capture threads are running" /var/log/suricata/suricata.log >> /dev/null; echo $?'
-    ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
+    cmds = [
+        'iptables -L FORWARD | grep -q "NFQUEUE num 0"; echo $?',
+        'suricata -c /etc/suricata/suricata.yaml -T | grep -q "Configuration provided was successfully loaded. Exiting"; echo $?',
+        'suricata --dump-config | grep -qP "^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]"; echo $?',
+        'suricata --dump-config | grep -qP "af-packet.0.interface = enp0s3"; echo $?',
+        'grep -iq "engine started" /var/log/suricata/suricata.log && grep -qi "AFP capture threads are running" /var/log/suricata/suricata.log; echo $?'
+    ]
+    success = 0 
+    
+    for cmd in cmds:
+        ssh = subprocess.Popen(["ssh", "-o StrictHostKeyChecking=no", host, cmd],
                            shell=False,
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
-    try:
-        result = ssh.stdout.readlines()[0].split(" ")
-    except IndexError:
-        logging.warning('Suricata not installed on host {host}'.format(host=host))
-        sys.exit(1)
+        try:
+            result = ssh.stdout.readlines()[0].split(" ")
+            logging.debug('Command {cmd} got result {result}'.format(cmd=cmd, result=result))
+            if result[0].rstrip() == '0':
+                success += 1
+        except IndexError:
+            logging.warning('Suricata conf check failed with {result} for cmd {cmd}'.format(result=result, cmd=cmd))
+            sys.exit(1)
 
-    logging.debug('Exit code is {}'.format(result[0]))
-
-    if result[0].rstrip() == '0':
-        logging.info('Correct version of Suricata installed on {host}'.format(host=host))
+    if success == 5:
+        logging.info('All configuration checks passed')
         command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
                   .format(step=vta_step)
         p = subprocess.Popen(shlex.split(command),
