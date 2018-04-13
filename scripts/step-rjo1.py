@@ -24,7 +24,7 @@ def main():
         'suricata --dump-config | grep -qP "^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]"; echo $?',
         'systemctl is-active --quiet suricata; echo $?',
         'ps auxf | grep -qP "/usr/bin/[s]uricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid -q 0 -D -vvv"; echo $?',
-        'tail -n 20 /var/log/suricata/suricata.log | grep -iq -e "NFQ running in standard ACCEPT/DROP mode" -e "engine started"; echo $?'
+        'grep -iq -e "NFQ running in standard ACCEPT/DROP mode" -e "engine started" /var/log/suricata/suricata.log; echo $?'
     ]
     success = 0 
 
