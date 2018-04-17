@@ -20,7 +20,6 @@ def main():
     host = 'ids'
     cmds = [
         'iptables -L FORWARD | grep -q "NFQUEUE num 0"; echo $?',
-        'suricata -c /etc/suricata/suricata.yaml -T | grep -q "Configuration provided was successfully loaded. Exiting"; echo $?',
         'suricata --dump-config | grep -qP "^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]"; echo $?',
         'systemctl is-active --quiet suricata; echo $?',
         'ps auxf | grep -qP "/usr/bin/[s]uricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid -q 0 -D -vvv"; echo $?',
