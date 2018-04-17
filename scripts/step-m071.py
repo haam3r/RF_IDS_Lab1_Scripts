@@ -75,8 +75,21 @@ def main():
     # Send Obj data to VTA
     logging.debug(payload)
     
-    r = s.put(virtualta_hostname + '/api/v2/labuser_form/', json=payload)
-    logging.debug(r)
+    #r = dict()
+    try:
+        file = open("/root/running/step-m071.txt", 'r')
+        file.close()
+        logging.debug("step-m071: File found not doing anything")
+    except FileNotFoundError:
+        r = s.put(virtualta_hostname + '/api/v2/labuser_form/', json=payload)
+        logging.debug("step-m071: Answer file not found, posted it, got answer: {r}".format(r=r))
+        with open("/root/running/step-m071.txt", 'w') as m071:
+            if r.status_code == requests.codes.ok:
+                m071.write(questionanswer[0])
+                logging.debug("step-m071: Wrote answer {qa} to file".format(qa=questionanswer))
+
+    #logging.debug(r)
+        
 
 
     # TODO! Set answer from src variable
