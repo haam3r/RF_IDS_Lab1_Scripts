@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -19,11 +19,11 @@ def main():
     vta_step = 'step-rjo1'
     host = 'ids'
     cmds = [
-        'iptables -L FORWARD | grep -q "NFQUEUE num 0"; echo $?',
-        'suricata --dump-config | grep -qP "^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]"; echo $?',
-        'systemctl is-active --quiet suricata; echo $?',
-        'ps auxf | grep -qP "/usr/bin/[s]uricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid -q 0 -D -vvv"; echo $?',
-        'grep -iq -e "NFQ running in standard ACCEPT/DROP mode" -e "engine started" /var/log/suricata/suricata.log; echo $?'
+        r"iptables -L FORWARD | grep -q 'NFQUEUE num 0'; echo $?",
+        r"suricata --dump-config | grep -qP '^vars\.address-groups\.HOME_NET\s+=\s+\[10.10.10.0\/24\]'; echo $?",
+        r"systemctl is-active --quiet suricata; echo $?",
+        r"ps auxf | grep -qP '/usr/bin/[s]uricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid -q 0 -D -vvv'; echo $?",
+        r"grep -iq -e 'NFQ running in standard ACCEPT/DROP mode' -e 'engine started' /var/log/suricata/suricata.log; echo $?"
     ]
     success = 0 
 

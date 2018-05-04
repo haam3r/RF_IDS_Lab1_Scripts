@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -38,8 +38,8 @@ def main():
         sys.exit(1)
     
     logging.debug('Starting check for step-m071')
-    vta_step = 'step-m071'
-    host = 'ids'
+    #vta_step = 'step-m071'
+    #host = 'ids'
     with open("/root/running/red_ips.txt") as f:
         data = f.readlines()
     src = data[-1].rstrip()
@@ -84,28 +84,11 @@ def main():
         r = s.put(virtualta_hostname + '/api/v2/labuser_form/', json=payload)
         logging.debug("step-m071: Answer file not found, posted it, got answer: {r}".format(r=r))
         with open("/root/running/step-m071.txt", 'w') as m071:
-            if r.status_code == requests.codes.ok:
+            if r.status_code == requests.codes['ok']:
                 m071.write(questionanswer[0])
                 logging.debug("step-m071: Wrote answer {qa} to file".format(qa=questionanswer))
 
     #logging.debug(r)
-        
-
-
-    # TODO! Set answer from src variable
-    #command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
-    #            .format(step=vta_step)
-    #p = subprocess.Popen(shlex.split(command),
-    #                    stdout=subprocess.PIPE,
-    #                    stderr=subprocess.PIPE,
-    #                    shell=False)
-    #p.communicate()
-    #
-    #if p.returncode != 0:
-    #    logging.error('Setting objective {step} completed has failed'.format(step=vta_step))
-    #    sys.exit(1)
-    #else:
-    #    logging.info('Successfully set {step} as completed: {ret}'.format(step=vta_step, ret=p.returncode))
 
 if __name__ == '__main__':
     main()

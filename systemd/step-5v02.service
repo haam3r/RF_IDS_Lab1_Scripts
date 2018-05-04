@@ -2,7 +2,7 @@
 Description=IDS Lab 1 step-5v02.py Testing ICMP drop rule
 
 [Service]
-ExecStart=/root/labs/RF_IDS_Lab1_Scripts/scripts/step-5v02.py
+ExecStart=python3 /root/labs/RF_IDS_Lab1_Scripts/scripts/step-5v02.py
 Restart=always
 RestartSec=3
 

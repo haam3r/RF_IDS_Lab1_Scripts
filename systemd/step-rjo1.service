@@ -2,7 +2,7 @@
 Description=IDS Lab 1 step-rjo1 check if suricata is configured and running
 
 [Service]
-ExecStart=/root/labs/RF_IDS_Lab1_Scripts/scripts/step-rjo1.py
+ExecStart=python3 /root/labs/RF_IDS_Lab1_Scripts/scripts/step-rjo1.py
 Restart=always
 RestartSec=3
 

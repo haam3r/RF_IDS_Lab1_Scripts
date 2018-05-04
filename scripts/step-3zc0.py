@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
@@ -19,9 +19,10 @@ def main():
     vta_step = 'step-3zc0'
     host = 'ids'
     cmds = [
-        'grep -iPq "[alert|drop]" /etc/suricata/rules/custom.rules; echo $?',
-        'grep -oqP "sid\:1\d{6}" /etc/suricata/rules/custom.rules; echo $?',
-        'grep -qP "msg\:.+" /etc/suricata/rules/custom.rules; echo $?'
+        r"grep -iPq '[alert|drop]' /etc/suricata/rules/custom.rules; echo $?",
+        r"^(alert|drop)\s+((?i)icmp)\s+\$\w+\s+[[:alnum:]]+\s+(->|<>)\s+\$\w+\s+[[:alnum:]]+\s+\((?=.*?msg\:\".+\"\;)(?=.*?sid\:1\d{6}\;).*$",
+        r"grep -oqP 'sid\:1\d{6}' /etc/suricata/rules/custom.rules; echo $?",
+        r"grep -qP 'msg\:.+' /etc/suricata/rules/custom.rules; echo $?"
     ]
     success = 0
 
