@@ -24,10 +24,8 @@ def main():
 
     logging.debug('Starting check for {step}'.format(step=vta_step))
 
-    #response = os.system("ping -c 1 -I " + src + " www")
-    ping = subprocess.call("ping -c 1 -I " + src + " www")
-    #nc = os.system("nc -z www 80")
-    nc = subprocess.call("nc -z www 80")
+    ping = subprocess.call(["ping", "-c", "1", "-I", src, "www"])
+    nc = subprocess.call(["nc", "-z", "www", "80"])
     logging.debug('Response code was {}'.format(ping))
     logging.debug('NC code was {}'.format(nc))
 
@@ -37,13 +35,13 @@ def main():
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
     try:
-        result = ssh.stdout.readlines()[0].split(" ")
+        result = ssh.stdout.readlines()[0].rstrip()
         logging.debug(result)
     except IndexError:
-        logging.warning('Suricata not installed on host {host}'.format(host=host))
+        logging.warning('Step  failed. IndexError with grep check')
         sys.exit(1)
 
-    if ping != 0 and result[0].rstrip() == '0' and nc == 0:
+    if ping != 0 and result == 0 and nc == 0:
         logging.debug("Marking check for {step} as successful".format(step=vta_step))
         command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
                     .format(step=vta_step)
