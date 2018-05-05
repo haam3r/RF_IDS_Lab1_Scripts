@@ -27,7 +27,7 @@ def main():
 
     ping = subprocess.call(["ping", "-c", "1", "-I", src, "www"])
     nc = subprocess.call(["nc", "-z", "www", "80"])
-    logging.debug('Response code was {}'.format(ping))
+    logging.debug('Ping response code was {}'.format(ping))
     logging.debug('NC code was {}'.format(nc))
 
     cmd = 'grep -qP "Drop.+{src}" /var/log/suricata/fast.log; echo $?'.format(src=src)
@@ -37,12 +37,12 @@ def main():
                            stderr=subprocess.PIPE)
     try:
         result = ssh.stdout.readlines()[0].rstrip()
-        logging.debug(result)
+        print(result)
     except IndexError:
-        logging.warning('Step  failed. IndexError with grep check')
+        logging.error('Step {} failed. IndexError with grep check'.format(vta_step))
         sys.exit(1)
 
-    if ping != 0 and result == 0 and nc == 0:
+    if ping != 0 and result.decode('UTF-8') == '0' and nc == 0:
         logging.debug("Marking check for {step} as successful".format(step=vta_step))
         post = check(vta_step, True)
         if post == False:

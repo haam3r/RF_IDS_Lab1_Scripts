@@ -36,12 +36,12 @@ def main():
         try:
             result = ssh.stdout.readlines()[0].rstrip()
             logging.debug('Command {cmd} got result {result}'.format(cmd=cmd, result=result))
-            if result == 0:
+            if result.decode('UTF-8') == '0':
                 success += 1
         except IndexError:
             logging.warning('Suricata conf check failed for cmd {cmd}'.format(cmd=cmd))
             sys.exit(1)
-
+    
     if success == len(cmds):
         logging.info('All {nr} configuration checks passed for {step}'.format(nr=len(cmds), step=vta_step))
         post = check(vta_step, True)
