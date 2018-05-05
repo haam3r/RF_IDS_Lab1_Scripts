@@ -32,9 +32,9 @@ def main():
                            stdout=subprocess.PIPE,
                            stderr=subprocess.PIPE)
         try:
-            result = ssh.stdout.readlines()[0].split(" ")
+            result = ssh.stdout.readlines()[0].rstrip().decode('UTF-8')
             logging.debug('Command {cmd} got result {result}'.format(cmd=cmd, result=result))
-            if result[0].rstrip() == '0':
+            if result == '0':
                 success += 1
         except IndexError:
             logging.warning('Not okay'.format(host=host))
