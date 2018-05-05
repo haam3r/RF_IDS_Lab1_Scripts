@@ -5,6 +5,7 @@ import sys
 import subprocess
 import logging
 import shlex
+from objectiveschecks import check
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s',
@@ -43,22 +44,15 @@ def main():
     logging.debug('Exit code was {}'.format(result[0]))
 
     if success == len(cmds): 
-        logging.info('Correct rule in correct file')
-        command = r"python3 /root/labs/ci-modular-target-checks/objectiveschecks.py -d {step} -y"\
-                  .format(step=vta_step)
-        p = subprocess.Popen(shlex.split(command),
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE,
-                         shell=False)
-        p.communicate()
-    
-        if p.returncode != 0:
-            logging.error('Setting objective {step} completed has failed'.format(step=vta_step))
+        logging.info('Marking {step} as sucessful. Correct rule in correct file.'.format(Step=vta_step))
+        post = check(vta_step, True)
+        if post == False:
+            logging.error('Setting objective {} completed has failed'.format(vta_step))
             sys.exit(1)
         else:
-            logging.info('Successfully set {step} as completed: {ret}'.format(step=vta_step, ret=p.returncode))
+            logging.info('Successfully set {step} as completed'.format(step=vta_step))
     else:
-        logging.error('Exit code nonzero, objective not completed')
+        logging.info('{step} check returned zero response. Drop rule not in place.'.format(step=vta_step))
         sys.exit(1)
 
 if __name__ == '__main__':

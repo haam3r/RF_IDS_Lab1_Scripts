@@ -59,7 +59,7 @@ def check(step, objective):
     s.mount('https://', HTTPAdapter(max_retries=retries))
 
     # Send Obj data to VTA
-    #logging.debug(payload)
+    logging.debug(payload)
     r = s.put(virtualta_hostname + '/api/v2/labuser_any', json=payload, verify=False)
     if r.status_code == requests.codes['ok']:
         return True

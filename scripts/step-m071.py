@@ -38,8 +38,6 @@ def main():
         sys.exit(1)
     
     logging.debug('Starting check for step-m071')
-    #vta_step = 'step-m071'
-    #host = 'ids'
     with open("/root/running/red_ips.txt") as f:
         data = f.readlines()
     src = data[-1].rstrip()
@@ -75,7 +73,6 @@ def main():
     # Send Obj data to VTA
     logging.debug(payload)
     
-    #r = dict()
     try:
         file = open("/root/running/step-m071.txt", 'r')
         file.close()
@@ -87,8 +84,6 @@ def main():
             if r.status_code == requests.codes['ok']:
                 m071.write(questionanswer[0])
                 logging.debug("step-m071: Wrote answer {qa} to file".format(qa=questionanswer))
-
-    #logging.debug(r)
 
 if __name__ == '__main__':
     main()
