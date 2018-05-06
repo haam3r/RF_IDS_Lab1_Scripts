@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import sys
-import subprocess
 import logging
-import shlex
-import os
+import subprocess
+import sys
+
 from objectiveschecks import check
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s',
                     filename='/root/running/checks.log', filemode='a')
 
+
 def main():
     '''
-    Check if drop rule works 
+    Check if drop rule works
     '''
 
     vta_step = 'step-5v02'
@@ -39,20 +39,21 @@ def main():
         result = ssh.stdout.readlines()[0].rstrip()
         print(result)
     except IndexError:
-        logging.error('Step {} failed. IndexError with grep check'.format(vta_step))
+        logging.error('Grep for step {} failed'.format(vta_step))
         sys.exit(1)
 
     if ping != 0 and result.decode('UTF-8') == '0' and nc == 0:
-        logging.debug("Marking check for {step} as successful".format(step=vta_step))
+        logging.debug("Marking {step} as successful".format(step=vta_step))
         post = check(vta_step, True)
-        if post == False:
-            logging.error('Setting objective {} completed has failed'.format(vta_step))
+        if post is False:
+            logging.error('Setting {} completed has failed'.format(vta_step))
             sys.exit(1)
         else:
-            logging.info('Successfully set {step} as completed'.format(step=vta_step))
+            logging.info('Set {step} as completed'.format(step=vta_step))
     else:
-        logging.info('{step} check returned zero response. Drop rule not in place.'.format(step=vta_step))
+        logging.info('{step} check failed'.format(step=vta_step))
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-import sys
-import subprocess
 import logging
-import shlex
+import subprocess
+import sys
+
 from objectiveschecks import check
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s',
                     filename='/root/running/checks.log', filemode='a')
+
 
 def main():
     '''
@@ -35,7 +36,7 @@ def main():
     if result[0] == 'suricata' and result[1].startswith('4.'):
         logging.info('Correct version of Suricata installed on {host}'.format(host=host))
         post = check(vta_step, True)
-        if post == False:
+        if post is False:
             logging.error('Setting objective {} completed has failed'.format(vta_step))
             sys.exit(1)
         else:
